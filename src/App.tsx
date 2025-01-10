@@ -1,33 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Navigate, Outlet, Route, Routes } from "react-router";
+import "./tailwind.css";
+import HomePage from "./pages/home";
+import SignInPage from "./pages/auth/sign-in";
+import SignUpPage from "./pages/auth/sign-up";
+import { QueryClient, QueryClientProvider } from "react-query";
+import AuthContextProvider from "./contexts/AuthContext";
+import EmailConfirmationPage from "./pages/auth/email-confirm";
+
+const queryClient = new QueryClient()
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        <Route path="/" element={<AuthContextProvider><Outlet /></AuthContextProvider>}>
+          <Route index Component={HomePage} />
+        </Route>
+        <Route path="/auth">
+          <Route index element={<Navigate to="/auth/sign-in" />} />
+          <Route path="sign-in" Component={SignInPage} />
+          <Route path="sign-up" Component={SignUpPage} />
+          <Route path="email-verification" Component={EmailConfirmationPage} />
+        </Route>
+      </Routes>
+    </QueryClientProvider>
   )
 }
 
